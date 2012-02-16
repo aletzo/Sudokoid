@@ -23,6 +23,10 @@ public class Game extends Activity {
 
     private final int used[][][] = new int[9][9][];
 
+    private static final String PREF_PUZZLE = "puzzle";
+
+    protected static final int DIFFICULTY_CONTINUE = -1;
+
     private final String easyPuzzle = 
         "360000000" +
         "004230800" +
@@ -73,6 +77,26 @@ public class Game extends Activity {
         setContentView(puzzleView);
 
         puzzleView.requestFocus();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Music.play(this, R.raw.game);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Log.d(TAG, "Game.onPause");
+
+        Music.stop(this);
+
+        // Save the current puzzle
+        getPreferences(MODE_PRIVATE).edit()
+            .putString(PREF_PUZZLE, toPuzzleString(puzzle))
+            .commit();
     }
 
     protected void showKeypadOrError(int x, int y) {
@@ -195,9 +219,10 @@ public class Game extends Activity {
     private int[] getPuzzle(int diff) {
         String puz;
 
-        //TODO: continue last game
-
         switch (diff) {
+            case DIFFICULTY_CONTINUE:
+                puz = getPreferences(MODE_PRIVATE).getString(PREF_PUZZLE, easyPuzzle);
+                break;
             case DIFFICULTY_HARD:
                 puz = hardPuzzle;
                 break;

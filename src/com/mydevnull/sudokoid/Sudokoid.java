@@ -39,6 +39,9 @@ public class Sudokoid extends Activity implements OnClickListener {
 
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.continue_button:
+                startGame(Game.DIFFICULTY_CONTINUE);
+                break;
             case R.id.about_button:
                 Intent i = new Intent(this, About.class);
                 startActivity(i);
@@ -69,6 +72,18 @@ public class Sudokoid extends Activity implements OnClickListener {
         }
 
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Music.play(this, R.raw.main);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Music.stop(this);
     }
 
     private void openNewGameDialog() {
